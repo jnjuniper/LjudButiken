@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import Spots from "../Spots/Spots.jsx";
+
 function Hero () {
   const [heroImages, setHeroImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -101,6 +103,9 @@ return (
             </div>
           </div>
         </div>
+      </div>
+      <div className= "hidden lg:block">
+      <Spots />
       </div>
     </div>
   );
