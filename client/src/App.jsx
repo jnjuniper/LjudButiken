@@ -3,6 +3,7 @@ import Header from "./components/Header/Header.jsx";
 import Hero from "./components/Hero/Hero.jsx";
 import ProductGrid from "./components/ProductGrid/ProductGrid.jsx";
 import BottomIcons from "./components/BottomIcons/BottomIcons.jsx";
+import Footer from "./components/Footer/Footer.jsx";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Hero />
       <ProductGrid />
       <BottomIcons />
+      <Footer />
     </div>
   );
 }
