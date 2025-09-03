@@ -58,7 +58,7 @@ const Footer = () => {
           {sections.map((s, idx) => (
             <div key={s.title} className="border-b border-gray-200">
               <button
-                className="w-full flex items-center justify-between py-4 text-left"
+                className="w-full flex items-center justify-between py-4 text-left cursor-pointer"
                 onClick={() => toggle(idx)}
                 aria-expanded={openIndex === idx}
                 aria-controls={`section-${idx}`}
