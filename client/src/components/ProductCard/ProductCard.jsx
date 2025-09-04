@@ -7,7 +7,7 @@ export default function ProductCard({ product = {}, onFavorite = () => {} }) {
     image,
     secondaryImage1,
     productName,
-    productDescription,
+    //productDescription,
     brand,
     sku,
     price,
