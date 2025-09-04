@@ -21,7 +21,7 @@ return (
         {error}
       </div>
     )}
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-4 p-4">
       {spots.length > 0 &&
         spots.map((spot) => (
           <img
