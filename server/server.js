@@ -61,16 +61,16 @@ app.get("/api/products/:slug", (req, res) => {
 app.get("/api/similar-products/:slug", (req, res) => {
   const { slug } = req.params;
   const product = db
-    .prepare("SELECT brand FROM products WHERE slug = ?")
+    .prepare("SELECT categoryId FROM products WHERE slug = ?")
     .get(slug);
   if (product) {
     const selectSimilar = db.prepare(`
             SELECT id, image, productName, productDescription, brand, SKU, price, slug
             FROM products 
-            WHERE brand = ? AND slug != ? 
+            WHERE categoryId = ? AND slug != ? 
             LIMIT 3
         `);
-    const similarProducts = selectSimilar.all(product.brand, slug);
+    const similarProducts = selectSimilar.all(product.categoryId, slug);
     res.json(similarProducts);
   } else {
     res.status(404).json({ error: "Product not found" });
