@@ -19,6 +19,17 @@ app.use(
   })
 );
 
+app.get("/api/category", (req, res) => {
+  try {
+  const select = db.prepare("SELECT categoryId, name FROM Category");
+  const categories = select.all();
+  res.json(categories);
+} catch (error) {
+  res.status(500).json({ error: error.message });
+}
+});
+
+
 app.get("/api/products", (req, res) => {
   const searchTerm = req.query.search || "";
 
@@ -107,6 +118,7 @@ app.post("/api/products", (req, res) => {
 
   res.status(201).send();
 });
+
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);
