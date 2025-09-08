@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import  HeaderIcons  from  "./HeaderIcons.jsx";
 import logo from "../../assets/logo.png";
@@ -7,7 +7,22 @@ import logo from "../../assets/logo.png";
 
 const Header = () => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [categories, setCategories] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/category');
+                if (!response.ok) throw new Error('Failed to fetch categories');
+                const data = await response.json();
+                setCategories(data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
 const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -60,21 +75,18 @@ return (
             </div>
         </div>
 
-        <nav className="mt-4 md:mt-2 flex flex-col md:flex-row md:space-x-6">
-            <a href= "#" className="hover:text-blue-600">
-                Nyheter
-            </a>
-            <a href= "#" className="hover:text-blue-600">
-                Topplistan
-            </a>
-            <a href= "#" className="hover:text-blue-600">
-                Rea
-            </a>
-            <a href= "#" className="hover:text-blue-600">
-                Kampanjer
-            </a>
-        </nav>
-    </header>
+            <nav className="mt-4 md:mt-2 flex flex-col md:flex-row md:space-x-6">
+                {categories.map((category) => (
+                    <a
+                        key={category.categoryId}
+                        href={`/category/${category.categoryId}`}
+                        className="hover:text-blue-600"
+                    >
+                        {category.name}
+                    </a>
+                ))}
+            </nav>
+        </header>
 );
 };
 

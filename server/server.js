@@ -19,6 +19,17 @@ app.use(
   })
 );
 
+app.get("/api/category", (req, res) => {
+  try {
+  const select = db.prepare("SELECT categoryId, name FROM Category");
+  const categories = select.all();
+  res.json(categories);
+} catch (error) {
+  res.status(500).json({ error: error.message });
+}
+});
+
+
 app.get("/api/products", (req, res) => {
   const searchTerm = req.query.search || "";
 
@@ -50,16 +61,16 @@ app.get("/api/products/:slug", (req, res) => {
 app.get("/api/similar-products/:slug", (req, res) => {
   const { slug } = req.params;
   const product = db
-    .prepare("SELECT brand FROM products WHERE slug = ?")
+    .prepare("SELECT categoryId FROM products WHERE slug = ?")
     .get(slug);
   if (product) {
     const selectSimilar = db.prepare(`
             SELECT id, image, productName, productDescription, brand, SKU, price, slug
             FROM products 
-            WHERE brand = ? AND slug != ? 
+            WHERE categoryId = ? AND slug != ? 
             LIMIT 3
         `);
-    const similarProducts = selectSimilar.all(product.brand, slug);
+    const similarProducts = selectSimilar.all(product.categoryId, slug);
     res.json(similarProducts);
   } else {
     res.status(404).json({ error: "Product not found" });
@@ -107,6 +118,7 @@ app.post("/api/products", (req, res) => {
 
   res.status(201).send();
 });
+
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);
