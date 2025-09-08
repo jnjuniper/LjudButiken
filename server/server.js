@@ -19,16 +19,53 @@ app.use(
   })
 );
 
+// Helper to create URL-safe slugs from Swedish names like "Högtalare"
+function slugify(s = "") {
+  return s
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // strip diacritics
+    .toLowerCase()
+    .replace(/&/g, "-och-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 app.get("/api/category", (req, res) => {
   try {
-  const select = db.prepare("SELECT categoryId, name FROM Category");
-  const categories = select.all();
-  res.json(categories);
-} catch (error) {
-  res.status(500).json({ error: error.message });
-}
+    const select = db.prepare("SELECT categoryId, name FROM Category");
+    const categories = select.all();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+// Products by category slug, e.g. /api/categories/hogtalare/products
+app.get("/api/categories/:slug/products", (req, res) => {
+  try {
+    const { slug } = req.params;
+    const selectCategories = db.prepare(
+      "SELECT categoryId, name FROM Category"
+    );
+    const categories = selectCategories.all();
+    const match = categories.find((c) => slugify(c.name) === slug);
+    if (!match) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    const selectProducts = db.prepare(`
+      SELECT id, image, productName, productDescription, brand, SKU, price, slug
+      FROM products
+      WHERE categoryId = ?
+    `);
+    const products = selectProducts.all(match.categoryId);
+
+    res.json({ category: match, products });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get("/api/products", (req, res) => {
   const searchTerm = req.query.search || "";
@@ -118,7 +155,6 @@ app.post("/api/products", (req, res) => {
 
   res.status(201).send();
 });
-
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);

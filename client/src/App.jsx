@@ -1,9 +1,10 @@
 import "./App.css";
-import {BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header/Header.jsx";
 import Hero from "./components/Hero/Hero.jsx";
 import ProductGrid from "./components/ProductGrid/ProductGrid.jsx";
 import ProductDetails from "./pages/ClientView/ProductDetails/ProductDetails.jsx";
+import CategoryPage from "./pages/ClientView/CategoryPage/CategoryPage.jsx";
 import BottomIcons from "./components/BottomIcons/BottomIcons.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import SearchPage from "./pages/ClientView/SearchPage/SearchPage.jsx";
@@ -11,11 +12,10 @@ import AdminProductList from "./pages/Admin/AdminList.jsx";
 import AddProduct from "./pages/Admin/Add/AddProduct.jsx";
 
 function App() {
-
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
 
-    return (
+  return (
     <div className="min-h-screen flex flex-col">
       {!isAdminPage && (
         <Header
@@ -33,6 +33,7 @@ function App() {
           <Route path="/admin/products/new" element={<AddProduct />} />
           <Route path="/admin/products" element={<AdminProductList />} />
           <Route path="/products/:slug" element={<ProductDetails />} />
+          <Route path="/categories/:slug" element={<CategoryPage />} />
         </Routes>
       </main>
 
@@ -46,15 +47,15 @@ function App() {
   );
 }
 
-function AppWrapper () {
+function AppWrapper() {
   return (
     <BrowserRouter>
       <App />
-    </BrowserRouter> 
+    </BrowserRouter>
   );
 }
 
-   /* <div className="min-h-screen flex flex-col">
+/* <div className="min-h-screen flex flex-col">
       <Header />
       <Hero />
       <ProductGrid />
