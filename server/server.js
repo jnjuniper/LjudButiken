@@ -19,7 +19,6 @@ app.use(
   })
 );
 
-
 app.use(
   fileUpload({
     createParentPath: true,
@@ -38,7 +37,6 @@ function slugify(str) {
     .replace(/--+/g, "-");
 }
 
-
 app.post("/api/upload", (req, res) => {
   try {
     if (!req.files || !req.files.file) {
@@ -47,7 +45,6 @@ app.post("/api/upload", (req, res) => {
 
     const file = req.files.file;
 
-    
     if (!String(file.mimetype).startsWith("image/")) {
       return res.status(400).json({ error: "Endast bildfiler tillåtna." });
     }
@@ -66,7 +63,7 @@ app.post("/api/upload", (req, res) => {
         console.error(err);
         return res.status(500).json({ error: "Kunde inte spara filen." });
       }
-      
+
       const url = `/images/products/${filename}`;
       return res.json({ url });
     });
@@ -87,7 +84,6 @@ app.get("/api/products", (req, res) => {
   res.json(stmt.all(`%${searchTerm}%`));
 });
 
-
 app.get("/api/products/:slug", (req, res) => {
   const { slug } = req.params;
   const stmt = db.prepare(`
@@ -100,21 +96,27 @@ app.get("/api/products/:slug", (req, res) => {
   res.json(row);
 });
 
-
 app.get("/api/similar-products/:slug", (req, res) => {
-  const { slug } = req.params;
-  const base = db.prepare(`SELECT brand FROM products WHERE slug = ?`).get(slug);
-  if (!base) return res.status(404).json({ error: "Product not found" });
+  try {
+    const { slug } = req.params;
+    const base = db
+      .prepare(`SELECT categoryId FROM products WHERE slug = ?`)
+      .get(slug);
+    if (!base) return res.status(404).json({ error: "Product not found" });
 
-  const stmt = db.prepare(`
-    SELECT id, image, productName, productDescription, brand, SKU, price, slug
-    FROM products
-    WHERE brand = ? AND slug != ?
-    LIMIT 3
-  `);
-  res.json(stmt.all(base.brand, slug));
+    const stmt = db.prepare(`
+      SELECT id, image, productName, productDescription, brand, sku as sku, price, slug
+      FROM products
+      WHERE categoryId = ? AND slug != ?
+      ORDER BY id DESC
+      LIMIT 3
+    `);
+    return res.json(stmt.all(base.categoryId, slug));
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to load similar products" });
+  }
 });
-
 
 app.post("/api/products", (req, res) => {
   try {
@@ -123,16 +125,16 @@ app.post("/api/products", (req, res) => {
       productName,
       productDescription = "",
       brand = "",
-      SKU,        // OBS: versaler
+      SKU, // OBS: versaler
       price,
       categoryId, // från dropdown
     } = req.body;
 
-    
     if (!productName || productName.length > 25)
-      return res.status(400).json({ error: "Namn är obligatoriskt och max 25 tecken." });
-    if (!SKU)
-      return res.status(400).json({ error: "SKU är obligatoriskt." });
+      return res
+        .status(400)
+        .json({ error: "Namn är obligatoriskt och max 25 tecken." });
+    if (!SKU) return res.status(400).json({ error: "SKU är obligatoriskt." });
     if (price === undefined || price === null || isNaN(Number(price)))
       return res.status(400).json({ error: "Pris måste vara ett nummer." });
     if (!categoryId)
@@ -164,6 +166,35 @@ app.post("/api/products", (req, res) => {
   }
 });
 
+// Delete a product by ID
+app.delete("/api/products/:id", (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ error: "Invalid product id" });
+    }
+    const stmt = db.prepare(`DELETE FROM products WHERE id = ?`);
+    const info = stmt.run(id);
+    return res.json({ deleted: info.changes });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Kunde inte ta bort produkten" });
+  }
+});
+
+// Delete a product by slug
+app.delete("/api/products/by-slug/:slug", (req, res) => {
+  try {
+    const slug = String(req.params.slug || "");
+    if (!slug) return res.status(400).json({ error: "Invalid slug" });
+    const stmt = db.prepare(`DELETE FROM products WHERE slug = ?`);
+    const info = stmt.run(slug);
+    return res.json({ deleted: info.changes });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Kunde inte ta bort produkten" });
+  }
+});
 
 app.get("/api/heroImages", (_req, res) => {
   const stmt = db.prepare(
@@ -186,6 +217,37 @@ app.get("/api/categories", (_req, res) => {
   } catch (e) {
     console.error(e);
     res.json([]);
+  }
+});
+
+// Get products for a given category slug
+app.get("/api/categories/:slug/products", (req, res) => {
+  try {
+    const { slug } = req.params;
+    // find category by slugified name
+    const categories = db
+      .prepare(`SELECT categoryId, name FROM Category`)
+      .all();
+    const cat = categories.find((c) => slugify(c.name) === slug);
+    if (!cat) {
+      return res
+        .status(404)
+        .json({ error: "Category not found", products: [] });
+    }
+
+    const products = db
+      .prepare(
+        `SELECT id, image, productName, productDescription, brand, sku as sku, price, slug, categoryId
+         FROM products WHERE categoryId = ? ORDER BY id DESC`
+      )
+      .all(cat.categoryId);
+
+    return res.json({ category: cat, products });
+  } catch (e) {
+    console.error(e);
+    return res
+      .status(500)
+      .json({ error: "Failed to load category products", products: [] });
   }
 });
 

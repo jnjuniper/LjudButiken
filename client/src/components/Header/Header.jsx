@@ -1,19 +1,18 @@
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import HeaderIcons from "./HeaderIcons.jsx";
 import logo from "../../assets/logo.png";
 
-// Local slugify to build nice URLs from category names
+// Slugify identical to server
 const slugify = (s = "") =>
-  s
-    .toString()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // strip diacritics
+  String(s)
     .toLowerCase()
-    .replace(/&/g, "-och-")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/^-+|-+$/g, "")
+    .replace(/--+/g, "-");
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +22,7 @@ const Header = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/category");
+        const response = await fetch("/api/categories");
         if (!response.ok) throw new Error("Failed to fetch categories");
         const data = await response.json();
         setCategories(data);
@@ -41,7 +40,7 @@ const Header = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`search?query=${encodeURIComponent(searchTerm)}`);
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
       setSearchTerm("");
     }
   };
@@ -50,9 +49,9 @@ const Header = () => {
     <header className="p-4 bg-white shadow-md">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <a href="/">
+          <Link to="/">
             <img className="pl-1 pb-2 h-[100px]" src={logo} alt="" />
-          </a>
+          </Link>
         </div>
 
         <div className="flex items-center w-full md:w-auto md:flex-1 md:ml-6">
@@ -85,13 +84,13 @@ const Header = () => {
         {categories.map((category) => {
           const slug = slugify(category.name);
           return (
-            <a
+            <Link
               key={category.categoryId}
-              href={`/categories/${slug}`}
+              to={`/categories/${slug}`}
               className="hover:text-blue-600"
             >
               {category.name}
-            </a>
+            </Link>
           );
         })}
       </nav>

@@ -7,7 +7,6 @@ export default function AdminList() {
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-
     fetch("/api/products")
       .then((res) => {
         if (!res.ok) throw new Error("Kunde inte hämta produkter");
@@ -17,6 +16,19 @@ export default function AdminList() {
       .catch((e) => setErr(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  const deleteProduct = async (id) => {
+    if (!id) return;
+    const ok = window.confirm("Ta bort produkten? Detta går inte att ångra.");
+    if (!ok) return;
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Kunde inte ta bort produkten");
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (e) {
+      alert(e.message || "Kunde inte ta bort produkten");
+    }
+  };
 
   return (
     <section className="w-full">
@@ -37,6 +49,7 @@ export default function AdminList() {
               <th className="px-4 py-2 w-1/2">Namn</th>
               <th className="px-4 py-2 w-1/4">SKU</th>
               <th className="px-4 py-2 w-1/4">Pris</th>
+              <th className="px-4 py-2 text-right">Åtgärder</th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +84,14 @@ export default function AdminList() {
                   <td className="px-4 py-3">{p.productName}</td>
                   <td className="px-4 py-3">{p.SKU ?? p.sku}</td>
                   <td className="px-4 py-3">{p.price} kr</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => deleteProduct(p.id)}
+                      className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
+                    >
+                      Ta bort
+                    </button>
+                  </td>
                 </tr>
               ))}
           </tbody>

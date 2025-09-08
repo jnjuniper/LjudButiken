@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 
 const ProductDetails = () => {
@@ -30,10 +30,16 @@ const ProductDetails = () => {
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setSimilarProducts(data.slice(0, 3));
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.products)
+          ? data.products
+          : [];
+        setSimilarProducts(list.slice(0, 3));
       } catch (error) {
         console.error("Error fetching similar products:", error);
-        setError(error.message);
+        // Don't block product view if similar fails
+        setSimilarProducts([]);
       }
     };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
 import ProductGrid from "../../../components/ProductGrid/ProductGrid";
 
 const SearchPage = () => {
@@ -18,24 +18,25 @@ const SearchPage = () => {
   }, [location.search]);
 
   const fetchProducts = async (term) => {
-    
     try {
-      const response = await fetch(`/api/products?search=${term}`);
+      const response = await fetch(
+        `/api/products?search=${encodeURIComponent(term)}`
+      );
       const data = await response.json();
       setProducts(data);
     } catch (error) {
       console.error("Error fetching products:", error);
       setProducts([]);
-    } 
+    }
   };
-
-
 
   return (
     <div className="search-page flex-grow">
       <ProductGrid
         products={products}
-        title={`Sökresultat${products.length > 0 ? ` (${products.length})` : ""}`}
+        title={`Sökresultat${
+          products.length > 0 ? ` (${products.length})` : ""
+        }`}
         noResultsMessage="Inga produkter hittades för din sökning"
       />
     </div>
