@@ -3,16 +3,8 @@ import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function ProductCard({ product = {}, onFavorite = () => {} }) {
-  const {
-    image,
-    secondaryImage1,
-    productName,
-    //productDescription,
-    brand,
-    sku,
-    price,
-    slug,
-  } = product;
+  const { image, secondaryImage1, productName, brand, sku, price, slug } =
+    product;
 
   const [hovered, setHovered] = useState(false);
   const imgSrc = hovered && secondaryImage1 ? secondaryImage1 : image;
@@ -42,7 +34,7 @@ export default function ProductCard({ product = {}, onFavorite = () => {} }) {
             <img
               src={imgSrc}
               alt={productName || "Produktbild"}
-              className="absolute inset-0 w-full h-full object-contain p-2" // ⬅️ contain + padding
+              className="absolute inset-0 w-full h-full object-contain p-2"
               loading="lazy"
               decoding="async"
             />
