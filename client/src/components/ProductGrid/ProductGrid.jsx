@@ -5,6 +5,7 @@ export default function ProductGrid({
   products: externalProducts,
   title = "Produkter",
   noResultsMessage = "Inga produkter hittades",
+  centerTitle = false,
 }) {
   const [internalProducts, setInternalProducts] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,13 @@ export default function ProductGrid({
   return (
     <section className="w-full">
       <div className="w-full px-4 sm:px-4 lg:px-4 py-10">
-        <h2 className="text-xl font-bold mb-6">{title}</h2>
+        <h2
+          className={`text-xl font-bold mb-6 ${
+            centerTitle ? "text-center" : ""
+          }`}
+        >
+          {title}
+        </h2>
 
         <div className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {loading ? (
