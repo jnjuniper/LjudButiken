@@ -9,13 +9,14 @@ const fileUpload = require("express-fileupload");
 
 const port = 8000;
 
-const db = new Database("./db/db.db", { verbose: console.log });
+const sqliteVerbose = process.env.SQL_DEBUG === "1" ? console.log : undefined;
+const db = new Database("./db/db.db", { verbose: sqliteVerbose });
 const app = express();
 
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: ["http://localhost:3000"],
   })
 );
 
@@ -65,6 +66,40 @@ app.post("/api/upload", (req, res) => {
       }
 
       const url = `/images/products/${filename}`;
+      return res.json({ url });
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Uppladdningsfel." });
+  }
+});
+
+// Upload category images to /public/images/categories
+app.post("/api/upload/category", (req, res) => {
+  try {
+    if (!req.files || !req.files.file) {
+      return res.status(400).json({ error: "Ingen fil mottagen." });
+    }
+    const file = req.files.file;
+    if (!String(file.mimetype).startsWith("image/")) {
+      return res.status(400).json({ error: "Endast bildfiler tillåtna." });
+    }
+    const uploadDir = path.join(
+      __dirname,
+      "../client/public/images/categories"
+    );
+    fs.mkdirSync(uploadDir, { recursive: true });
+    const safeName = file.name
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9._-]/g, "");
+    const filename = `${Date.now()}-${safeName}`;
+    const dest = path.join(uploadDir, filename);
+    file.mv(dest, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Kunde inte spara filen." });
+      }
+      const url = `/images/categories/${filename}`;
       return res.json({ url });
     });
   } catch (e) {
@@ -211,12 +246,65 @@ app.get("/api/spots", (_req, res) => {
 app.get("/api/categories", (_req, res) => {
   try {
     const rows = db
-      .prepare(`SELECT categoryId, name FROM Category ORDER BY name`)
+      .prepare(`SELECT categoryId, name, image FROM Category ORDER BY name`)
       .all();
     res.json(rows);
   } catch (e) {
     console.error(e);
     res.json([]);
+  }
+});
+
+// Create a new category
+app.post("/api/categories", (req, res) => {
+  try {
+    const { name, image = "", categoryDescription = "" } = req.body || {};
+    if (!name || typeof name !== "string" || name.trim() === "") {
+      return res.status(400).json({ error: "Namn är obligatoriskt." });
+    }
+    const trimmed = name.trim();
+    if (trimmed.length > 25) {
+      return res.status(400).json({ error: "Namn får vara max 25 tecken." });
+    }
+    const stmt = db.prepare(
+      `INSERT INTO Category (name, categoryDescription, image) VALUES (?, ?, ?)`
+    );
+    const info = stmt.run(trimmed, categoryDescription, image);
+    return res.status(201).json({ categoryId: info.lastInsertRowid });
+  } catch (e) {
+    console.error(e);
+    let msg = "Kunde inte skapa kategori";
+    if (String(e.message).toLowerCase().includes("unique")) {
+      msg = "Kategorinamn måste vara unikt.";
+    }
+    return res.status(500).json({ error: msg });
+  }
+});
+
+// Delete category by id (only if unused by any products)
+app.delete("/api/categories/:id", (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ error: "Ogiltigt kategori-id" });
+    }
+    // Check usage in products
+    const used = db
+      .prepare(`SELECT COUNT(1) as cnt FROM products WHERE categoryId = ?`)
+      .get(id);
+    if (used && used.cnt > 0) {
+      return res.status(409).json({
+        error: "Kategorin används av produkter och kan inte tas bort.",
+      });
+    }
+
+    const info = db
+      .prepare(`DELETE FROM Category WHERE categoryId = ?`)
+      .run(id);
+    return res.json({ deleted: info.changes });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Kunde inte ta bort kategorin" });
   }
 });
 
