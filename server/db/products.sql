@@ -26,7 +26,7 @@ CREATE TABLE products (
 );
 
 
-Om ni behöver lägga in kategorier/produkter, så kan ni använda följande SQL: /AL
+/*Om ni behöver lägga in kategorier/produkter, så kan ni använda följande SQL: /AL */
 
 PRAGMA foreign_keys = ON;
 
@@ -87,5 +87,44 @@ INSERT INTO products (image, productName, productDescription, brand, sku, price,
  'Pickup – 2M Red',
  'Populär MM-pickup med livlig karaktär och fin spårning. Lätt att montera.',
  'Ortofon', 'OR-2M-RED', 1290, 4, 'pickup-2m-red');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/beogram4000c.jpg',
+'Skivspelare - Beogram 4000c',
+'Den originella, ikoniska skivspelare som satt standarden för alla efterföljare - Omarbetad för modern användning.',
+'Bang & Olufsen', 'BO-4000-C', 14000, 4, 'beogram-skivspelare');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/beosounda9.jpg', 'Golvhögtalare - Beosound A9 5TH GEN',
+'Beosound A9 5th Gen är en kraftfull och välspelande trådlös högtalare som kan användas separap, eller ingå i ett trådlöst system i flera rum. En riktigt exklusiv streaming-högtalare med ikonisk design och ett övertygande ljud som gör den till en naturlig mittpunkt i ditt hem.',
+'Bang & Olufsen', 'BO-BS-A9', 41990, 1, 'beosound-a9-hogtalare');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/hd505.jpg', 'ANC Hörlurar - HD 505 Copper', 'Vänta lite, kom det där ljudet från mitt rum, eller var det inspelningen? Bortom en viss nivå av ljudtrogenhet kan det vara svårt att avgöra. Nej, vi försöker inte göra dig förvirrad. Men det här är ett av sätten som HD 505 kommer att överraska dig på, särskilt om högkvalitativt ljud är nytt för dig. Allt känns mer verkligt, du befinner dig mitt i händelsernas centrum – utan att behöva investera i stor och dyr utrustning',
+'Sennheiser', 'SE-HD505', 2990, 3, 'sennheiser-hd505-horlurar');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/medusa55.jpg', 
+'Rörförstärkare - Medusa 55', 
+'Medusa 55 förstärkaren kombinerar klassisk, "split load design" från den legendariska Mc Intosh and Quad förstärkarna.', 
+'WB Manufacture', 'WB-MD-55', 25000, 2, 'wb-medusa55-forstarkare');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/audiotechnica.jpg', 
+'Skivspelare - AT-LP120XUSB', 
+'Manuell skivspelare med direktdrift som passar lika bra för DJ-båset som hemmabruk. S-formad tonarm med Audio Technica AT-VM95E pickup!',
+ 'Audio Technica', 'AT-LP120XUSB', 4489, 4, 'audio-technica-skivspelare');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/onkyo.jpg',
+'9.2 kanals A/V receiver - TX-RZ50',
+'THX certifierad 9.2 kanals A/V receiver, som är utbyggbar till 11.2, med gott om kraft, gamingoptimerad HDMI 2.1, avancerat kalibreringssystem och omfattande streamingstöd!',
+'Onkyo', 'OK-TX-RZ50', 19480, 2, 'onkyo-tx-receiver');
+
+INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
+('/images/products/elara.jpg',
+'Aktiva högtalare - Elara LN-01A',
+'De aktiva högtalarna i Elara Series ger både bra ljud och fler uppspelningsmöjligheter! Särskilt rekommenderade ljud/Bild April 2017.',
+'TRIANGLE', 'TR-EL-LN01A', 5490, 1, 'triangle-elara-hogtalare');
 
 COMMIT;
