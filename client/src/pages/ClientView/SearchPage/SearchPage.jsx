@@ -34,9 +34,10 @@ const SearchPage = () => {
     <div className="search-page flex-grow">
       <ProductGrid
         products={products}
-        title={`Sökresultat${
-          products.length > 0 ? ` (${products.length})` : ""
+        title={`Hittade ${products.length} ${
+          products.length === 1 ? "produkt" : "produkter"
         }`}
+        centerTitle
         noResultsMessage="Inga produkter hittades för din sökning"
       />
     </div>
