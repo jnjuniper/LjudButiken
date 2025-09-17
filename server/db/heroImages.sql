@@ -1,4 +1,3 @@
--- database: db.db
 CREATE TABLE heroImages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     image TEXT,
