@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import HeaderIcons from "./HeaderIcons.jsx";
 import logo from "../../assets/logo.png";
 
-// Slugify identical to server
 const slugify = (s = "") =>
   String(s)
     .toLowerCase()

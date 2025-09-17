@@ -29,10 +29,10 @@ function Spots(){
               <img
                 src={spot.image}
                 alt={spot.altText || "Spot image"}
-                className="w-full h-[300px] object-cover transition-transform duration-300 group-hover:scale-105 group-hover:brightness-75" // Add hover effects: scale and brightness
+                className="w-full h-[300px] object-cover transition-transform duration-300 group-hover:scale-105 group-hover:brightness-75"
               />
               
-              <div className="absolute inset-0 flex items-center justify-center opacity-100 group-hover:opacity-90 transition-opacity duration-300"> {/* Add opacity transition */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-100 group-hover:opacity-90 transition-opacity duration-300">
                 <h2 className="text-white text-xl font-bold text-center px-2 drop-shadow-lg">
                   {spot.title}
                 </h2>

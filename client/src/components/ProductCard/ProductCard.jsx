@@ -28,7 +28,6 @@ export default function ProductCard({ product = {}, onFavorite = () => {} }) {
     >
       {/* Bild */}
       <Link to={linkTo} className="relative block w-full">
-        {/* Fast ratio så alla kort blir lika höga */}
         <div className="relative aspect-[3/4] overflow-hidden">
           {imgSrc ? (
             <img
@@ -44,7 +43,6 @@ export default function ProductCard({ product = {}, onFavorite = () => {} }) {
             </div>
           )}
 
-          {/* Hjärtat – nere höger, ovanpå bilden */}
           <button
             type="button"
             aria-label="Lägg till i favoriter"
@@ -59,9 +57,7 @@ export default function ProductCard({ product = {}, onFavorite = () => {} }) {
         </div>
       </Link>
 
-      {/* Textblock */}
       <Link to={linkTo} className="block p-3">
-        {/* Vänster: titel/teaser — Höger: pris */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h3 className="text-sm font-medium leading-snug line-clamp-1">
@@ -74,7 +70,6 @@ export default function ProductCard({ product = {}, onFavorite = () => {} }) {
           </span>
         </div>
 
-        {/* Märke (egen rad under) */}
         {(brand || sku) && (
           <p className="mt-1 text-xs text-gray-500">
             {brand && (

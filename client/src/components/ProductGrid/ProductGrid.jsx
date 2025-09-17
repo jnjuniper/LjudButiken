@@ -10,13 +10,11 @@ export default function ProductGrid({
   const [internalProducts, setInternalProducts] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Use external products if provided, otherwise fetch all
   const products =
     externalProducts !== undefined ? externalProducts : internalProducts;
 
   useEffect(() => {
     if (externalProducts !== undefined) {
-      // If external products are provided, no need to fetch
       setLoading(false);
       return;
     }

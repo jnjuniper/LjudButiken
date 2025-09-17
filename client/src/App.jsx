@@ -1,6 +1,5 @@
 import "./App.css";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-
 import Header from "./components/Header/Header.jsx";
 import Hero from "./components/Hero/Hero.jsx";
 import ProductGrid from "./components/ProductGrid/ProductGrid.jsx";
@@ -10,7 +9,6 @@ import BottomIcons from "./components/BottomIcons/BottomIcons.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import SearchPage from "./pages/ClientView/SearchPage/SearchPage.jsx";
 import AddProduct from "./pages/Admin/AdminAdd/AddProduct.jsx";
-
 import AdminLayout from "./pages/Admin/AdminLayout.jsx";
 import AdminList from "./pages/Admin/AdminList.jsx";
 import AdminCategory from "./pages/Admin/Categories/AdminCategory.jsx";
