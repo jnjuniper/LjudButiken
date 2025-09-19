@@ -24,7 +24,6 @@ const Footer = () => {
 
   return (
     <footer className="mt-12 bg-gray-100 text-gray-800">
-      {/* Desktop/Tablet layout */}
       <div className="hidden sm:block">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
@@ -52,7 +51,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Mobile accordion */}
       <div className="block sm:hidden">
         <div className="mx-auto max-w-md px-4 py-6">
           {sections.map((s, idx) => (

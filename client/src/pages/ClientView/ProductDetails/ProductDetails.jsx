@@ -38,7 +38,6 @@ const ProductDetails = () => {
         setSimilarProducts(list.slice(0, 3));
       } catch (error) {
         console.error("Error fetching similar products:", error);
-        // Don't block product view if similar fails
         setSimilarProducts([]);
       }
     };

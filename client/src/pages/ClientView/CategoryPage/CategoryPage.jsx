@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductGrid from "../../../components/ProductGrid/ProductGrid";
 
-// Keep a local slugify identical to the server's so links match
 const slugify = (s = "") =>
   s
     .toString()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // strip diacritics
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/&/g, "-och-")
     .replace(/[^a-z0-9]+/g, "-")
@@ -23,7 +22,6 @@ export default function CategoryPage() {
     let active = true;
     setLoading(true);
 
-    // Fetch products for this category slug
     fetch(`/api/categories/${slug}/products`)
       .then((r) => {
         if (!r.ok) throw new Error("Failed to load category products");
@@ -32,7 +30,6 @@ export default function CategoryPage() {
       .then((data) => {
         if (!active) return;
         setProducts(data.products || []);
-        // Prefer server-provided name, fallback to derived from slug
         const name = data.category?.name || slug.replace(/-/g, " ");
         setTitle(name.charAt(0).toUpperCase() + name.slice(1));
       })
