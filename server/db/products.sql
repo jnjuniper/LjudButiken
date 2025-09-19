@@ -1,17 +1,3 @@
--- database: db.db
-CREATE TABLE products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    image TEXT,
-    productName TEXT NOT NULL,
-    productDescription TEXT,
-    brand TEXT,
-    sku TEXT NOT NULL,
-    price REAL NOT NULL,
-    category TEXT NOT NULL,
-    slug TEXT
-);
-
-DROP TABLE IF EXISTS products;
 CREATE TABLE products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     image TEXT,
@@ -26,18 +12,11 @@ CREATE TABLE products (
 );
 
 
-Om ni behöver lägga in kategorier/produkter, så kan ni använda följande SQL: /AL
+Om ni behöver lägga in produkter, så kan ni använda följande SQL: /AL
 
 PRAGMA foreign_keys = ON;
 
 BEGIN TRANSACTION;
-
--- 2) Kategorier
-INSERT INTO Category (categoryId, name, categoryDescription, image) VALUES
-(1, 'Högtalare', 'Golvhögtalare och stativhögtalare för stereolyssning och hemmabio.', '/images/categories/hogtalare.jpg'),
-(2, 'Förstärkare & Receivers', 'Stereo-förstärkare och nätverksreceivers med streaming och HDMI.', '/images/categories/forstarkare-receivers.jpg'),
-(3, 'Hörlurar', 'Brusreducerande, öppna och slutna hörlurar för musik och studio.', '/images/categories/horlurar.jpg'),
-(4, 'Skivspelare & Vinyl', 'Skivspelare, pickuper och tillbehör för vinylsamlingen.', '/images/categories/skivspelare-vinyl.jpg');
 
 -- 3) Produkter (8 st)
 INSERT INTO products (image, productName, productDescription, brand, sku, price, categoryId, slug) VALUES
